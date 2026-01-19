@@ -166,8 +166,23 @@ function requireAdmin(req, res, next) {
 app.post('/api/auth/login', loginLimiter, async (req, res) => {
   const { password } = req.body;
   
-  // Verificación simple para demo (en prod usar bcrypt con hash)
+  let isValid = false;
+
+  // 1. Verificar contraseña simple (admin123)
   if (password === ADMIN_PASSWORD) {
+    isValid = true;
+  }
+  
+  // 2. Verificar Hash (si la simple falló y existe hash configurado)
+  if (!isValid && ADMIN_PASSWORD_HASH) {
+    try {
+      isValid = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+    } catch (e) {
+      console.error("Error comparando hash:", e);
+    }
+  }
+
+  if (isValid) {
     const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
     
     // Configuración robusta de cookies para Cross-Site (Render Backend -> Localhost Frontend)
