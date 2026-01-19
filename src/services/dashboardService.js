@@ -95,9 +95,9 @@ export function buildDashboardService({ baseUrl, apiKey }) {
     return data;
   }
 
-  async function updateInstitutionCredits(id, amount) {
+  async function updateInstitutionCredits(id, amount, action = 'add') {
       // amount can be negative
-      const { data } = await client.post(`/partner/institutions/${id}/credits`, { amount, action: 'add' });
+      const { data } = await client.post(`/partner/institutions/${id}/credits`, { amount, action });
       return data;
   }
 

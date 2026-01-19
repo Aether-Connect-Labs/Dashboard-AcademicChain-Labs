@@ -263,9 +263,55 @@ export default function Institutions() {
                   <td className="px-4 py-3 text-right text-xs text-slate-300">
                     {row.emissions?.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-right text-xs text-slate-300">
-                    {(limits[row.id] || 0).toLocaleString()}
-                  </td>
+                <td className="p-4 align-middle">
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => handleUpdateCredits(row.id, -100)}
+                      className="h-6 w-6 rounded border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center"
+                    >
+                      -
+                    </button>
+                    <input 
+                      type="number"
+                      value={row.credits || 0}
+                      onChange={(e) => {
+                         const val = parseInt(e.target.value, 10);
+                         if (!isNaN(val)) {
+                            // Optimistic UI update locally
+                            setRows(rows.map(r => r.id === row.id ? { ...r, credits: val } : r));
+                         }
+                      }}
+                      onBlur={(e) => {
+                         const val = parseInt(e.target.value, 10);
+                         if (!isNaN(val)) {
+                            // Send 'set' action to backend
+                            if (service.updateInstitutionCredits) {
+                                service.updateInstitutionCredits(row.id, val, 'set')
+                                  .then(res => {
+                                      if (res.success) {
+                                          setRows(rows.map(r => r.id === row.id ? { ...r, credits: res.credits } : r));
+                                      }
+                                  })
+                                  .catch(err => console.error(err));
+                            }
+                         }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.target.blur();
+                        }
+                      }}
+                      className="w-24 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-center text-sm text-slate-200 focus:border-brand-500 focus:outline-none"
+                    />
+                    <span className="text-xs text-slate-500">cred.</span>
+                    <button 
+                      onClick={() => handleUpdateCredits(row.id, 100)}
+                      className="h-6 w-6 rounded border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center"
+                    >
+                      +
+                    </button>
+                  </div>
+                </td>
                   <td className="px-4 py-3 text-right">
                     <MoreHorizontal className="ml-auto h-4 w-4 text-slate-500" />
                   </td>
