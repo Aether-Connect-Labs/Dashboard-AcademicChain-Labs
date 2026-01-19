@@ -56,7 +56,10 @@ export default function Login() {
       }
     } catch (error) {
       console.error(error);
-      alert("No se pudo conectar con el backend. Verifica la URL.");
+      const msg = error.message === 'Failed to fetch' 
+        ? "No se pudo conectar con el servidor (Error de Red/CORS). \n\nPosibles causas:\n1. El backend en Render se está despertando (espera 1 min).\n2. Bloqueo de CORS (revisa la consola).\n3. URL incorrecta."
+        : `Error de conexión: ${error.message}`;
+      alert(msg);
     } finally {
       setLoading(false);
     }

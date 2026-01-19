@@ -17,25 +17,26 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-dashboard-secret';
 app.use(helmet());
 
 // Configuración dinámica de CORS para desarrollo y producción
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  process.env.FRONTEND_URL
-].filter(Boolean);
-
 app.use(cors({
   origin: function (origin, callback) {
-    // Permitir requests sin origen (como curl o apps móviles)
+    // Permitir requests sin origen (curl, mobile app, etc)
     if (!origin) return callback(null, true);
     
-    if (process.env.NODE_ENV !== 'production') {
-       return callback(null, true); // En desarrollo permitir todo para evitar bloqueos
-    }
+    // Permitir Localhost (puertos comunes) y dominios de producción
+    const allowedPatterns = [
+      /^http:\/\/localhost:\d+$/,
+      /^http:\/\/127\.0\.0\.1:\d+$/,
+      /\.onrender\.com$/
+    ];
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
+
+    if (isAllowed || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Bloqueado origen: ${origin}`);
+      // Fallback para debug: permitir todo si estamos desesperados (opcional)
+      // callback(null, true); 
       callback(new Error('Bloqueado por CORS'));
     }
   },
@@ -169,10 +170,11 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
   if (password === ADMIN_PASSWORD) {
     const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
     
+    // Configuración robusta de cookies para Cross-Site (Render Backend -> Localhost Frontend)
     res.cookie('admin_token', token, {
       httpOnly: true,
-      secure: true, // Siempre secure para cookies cross-site
-      sameSite: 'none', // Necesario para cookies entre dominios (Frontend Local -> Backend Render)
+      secure: true, // Requerido si sameSite='none'
+      sameSite: 'none', // Requerido para cookies cross-domain
       maxAge: 24 * 60 * 60 * 1000
     });
     
