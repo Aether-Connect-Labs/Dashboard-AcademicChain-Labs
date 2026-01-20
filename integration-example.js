@@ -5,8 +5,8 @@
 // 1. Instala axios en tu proyecto: npm install axios
 // 2. Copia este código en tu backend (donde vayas a emitir certificados)
 
-const axios = require('axios');
-const crypto = require('crypto');
+import axios from 'axios';
+import crypto from 'crypto';
 
 // URL de tu Dashboard en Render
 const DASHBOARD_URL = 'https://dashboard-academicchain-labs.onrender.com';
