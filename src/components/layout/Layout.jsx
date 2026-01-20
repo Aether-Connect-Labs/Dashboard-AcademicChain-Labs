@@ -45,7 +45,7 @@ export default function Layout() {
                       "flex items-center gap-3 rounded-xl px-3 py-2 transition-colors",
                       isActive
                         ? "bg-brand-500/15 text-brand-200"
-                        : "text-slate-400 hover:bg-slate-800/80 hover:text-slate-100",
+                        : "text-slate-300 hover:bg-slate-800/80 hover:text-slate-100",
                     ].join(" ")
                   }
                 >
@@ -57,12 +57,12 @@ export default function Layout() {
           </div>
           <div className="space-y-2 text-xs">
             <div className="pill w-full justify-between bg-slate-950/60">
-              <span className="truncate">API key</span>
-              <span className="font-mono text-[11px] text-slate-300">{maskedKey}</span>
+              <span className="truncate text-slate-300">API key</span>
+              <span className="font-mono text-[11px] text-slate-200">{maskedKey}</span>
             </div>
             <div className="pill w-full justify-between bg-slate-950/60">
-              <span>API base</span>
-              <span className="truncate text-[11px] text-slate-300">{baseUrl}</span>
+              <span className="text-slate-300">API base</span>
+              <span className="truncate text-[11px] text-slate-200">{baseUrl}</span>
             </div>
           </div>
         </aside>
@@ -72,7 +72,7 @@ export default function Layout() {
               <h1 className="text-xl font-semibold tracking-tight text-slate-50">
                 AcademicChain Admin Center
               </h1>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-300">
                 Controla universidades, API keys y credenciales emitidas en tiempo real.
               </p>
             </div>

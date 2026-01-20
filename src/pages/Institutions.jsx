@@ -221,13 +221,13 @@ export default function Institutions() {
 
         <div className="flex-1 overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/70">
           <table className="min-w-full divide-y divide-slate-800 text-sm">
-            <thead className="bg-slate-950/90 text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-950/90 text-xs uppercase tracking-wide text-slate-400">
               <tr>
                 <th className="px-4 py-3 text-left">Institución</th>
-                <th className="px-4 py-3 text-left">Estado</th>
-                <th className="px-4 py-3 text-right">Llaves</th>
                 <th className="px-4 py-3 text-right">Emisiones</th>
-                <th className="px-4 py-3 text-right">Créditos</th>
+                <th className="px-4 py-3 text-right">Verif.</th>
+                <th className="px-4 py-3 text-right">Revoc.</th>
+                <th className="px-4 py-3 text-center">Créditos</th>
                 <th className="px-4 py-3 text-right"></th>
               </tr>
             </thead>
@@ -240,33 +240,28 @@ export default function Institutions() {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-xs">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 text-slate-300 font-bold text-xs">
                         {row.name.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <div className="font-medium text-slate-200">{row.name}</div>
-                        <div className="text-[10px] text-slate-500">{row.plan} • {row.tokenId}</div>
+                        <div className="text-[10px] text-slate-400">{row.plan} • <span className={row.status === 'Activa' ? 'text-emerald-400' : 'text-red-400'}>{row.status}</span></div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${row.status === 'Activa' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
-                      {row.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right text-xs text-slate-300">
-                    <div className="flex items-center justify-end gap-1">
-                      <Key className="h-3 w-3 text-slate-500" />
-                      <span>{row.activeKeys || 0}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right text-xs text-slate-300">
                     {row.emissions?.toLocaleString()}
                   </td>
+                  <td className="px-4 py-3 text-right text-xs text-slate-300">
+                    {row.verifications?.toLocaleString() || 0}
+                  </td>
+                  <td className="px-4 py-3 text-right text-xs text-red-300/80">
+                    {row.revocations?.toLocaleString() || 0}
+                  </td>
                 <td className="p-4 align-middle">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2">
                     <button 
-                      onClick={() => handleUpdateCredits(row.id, -100)}
+                      onClick={(e) => { e.stopPropagation(); handleUpdateCredits(row.id, -100); }}
                       className="h-6 w-6 rounded border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center"
                     >
                       -
@@ -274,6 +269,7 @@ export default function Institutions() {
                     <input 
                       type="number"
                       value={row.credits || 0}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={(e) => {
                          const val = parseInt(e.target.value, 10);
                          if (!isNaN(val)) {
@@ -301,11 +297,10 @@ export default function Institutions() {
                           e.target.blur();
                         }
                       }}
-                      className="w-24 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-center text-sm text-slate-200 focus:border-brand-500 focus:outline-none"
+                      className="w-20 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-center text-sm text-slate-200 focus:border-brand-500 focus:outline-none"
                     />
-                    <span className="text-xs text-slate-500">cred.</span>
                     <button 
-                      onClick={() => handleUpdateCredits(row.id, 100)}
+                      onClick={(e) => { e.stopPropagation(); handleUpdateCredits(row.id, 100); }}
                       className="h-6 w-6 rounded border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center"
                     >
                       +
@@ -319,7 +314,7 @@ export default function Institutions() {
               ))}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-xs text-slate-500">
+                  <td colSpan={6} className="py-12 text-center text-xs text-slate-400">
                     No se encontraron instituciones.
                   </td>
                 </tr>
@@ -352,18 +347,24 @@ export default function Institutions() {
 
           <div className="space-y-6">
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
-                <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-2.5">
+                <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-1">
                   <Activity className="h-3 w-3" /> Emisiones
                 </div>
-                <div className="text-lg font-semibold text-slate-100">{selectedInst.emissions?.toLocaleString()}</div>
+                <div className="text-base font-semibold text-slate-100">{selectedInst.emissions?.toLocaleString()}</div>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
-                <div className="flex items-center gap-2 text-xs text-slate-400 mb-1">
-                  <ShieldCheck className="h-3 w-3" /> Verificaciones
+              <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-2.5">
+                <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-1">
+                  <ShieldCheck className="h-3 w-3" /> Verific.
                 </div>
-                <div className="text-lg font-semibold text-slate-100">{selectedInst.verifications?.toLocaleString()}</div>
+                <div className="text-base font-semibold text-slate-100">{selectedInst.verifications?.toLocaleString()}</div>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-2.5">
+                <div className="flex items-center gap-2 text-[10px] text-red-400 mb-1">
+                  <X className="h-3 w-3" /> Revoc.
+                </div>
+                <div className="text-base font-semibold text-slate-100">{selectedInst.revocations?.toLocaleString() || 0}</div>
               </div>
             </div>
 

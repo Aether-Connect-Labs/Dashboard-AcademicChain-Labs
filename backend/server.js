@@ -76,31 +76,45 @@ const db = {
       status: "active",
       plan: "Enterprise",
       emissions: 420,
-      credits: 1000,
-      verifications: 1500,
+      credits: 50,
+      verifications: 150,
+      revocations: 2,
       createdAt: new Date().toISOString()
     },
     {
       id: "inst-2",
       name: "Escuela de Negocios Global",
-      slug: "escuela-negocios",
+      slug: "global-business-school",
       status: "active",
       plan: "Startup",
       emissions: 210,
-      credits: 50,
-      verifications: 800,
+      credits: 10,
+      verifications: 45,
+      revocations: 0,
       createdAt: new Date().toISOString()
     },
-    // Nuevas instituciones pre-cargadas
+    {
+      id: "inst-3",
+      name: "Instituto Creativo",
+      slug: "creative-institute",
+      status: "active",
+      plan: "Startup",
+      emissions: 120,
+      credits: 5,
+      verifications: 12,
+      revocations: 1,
+      createdAt: new Date().toISOString()
+    },
     {
       id: "inst-seq-test",
       name: "Sequential Test Uni",
-      slug: "sequential-test-uni",
+      slug: "sequential-test",
       status: "active",
       plan: "Enterprise",
-      emissions: 10,
-      credits: 500,
-      verifications: 5,
+      emissions: 499,
+      credits: 498, // Updated based on usage
+      verifications: 10,
+      revocations: 0,
       createdAt: new Date().toISOString()
     },
     {
@@ -112,6 +126,7 @@ const db = {
       emissions: 5,
       credits: 100,
       verifications: 2,
+      revocations: 0,
       createdAt: new Date().toISOString()
     }
   ],
