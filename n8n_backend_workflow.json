@@ -42,10 +42,43 @@
             {
               "value2": "/partner/crypto/transactions",
               "output": 4
+            },
+            {
+              "operation": "contains",
+              "value2": "/auth/",
+              "output": 5
+            },
+            {
+              "operation": "contains",
+              "value2": "key",
+              "output": 6
+            },
+            {
+              "value2": "/partner/emissions",
+              "output": 7
+            },
+            {
+              "operation": "contains",
+              "value2": "verify",
+              "output": 7
+            },
+            {
+              "operation": "contains",
+              "value2": "institution/",
+              "output": 7
+            },
+            {
+              "value2": "/partner/logs",
+              "output": 7
+            },
+            {
+              "operation": "contains",
+              "value2": "credits",
+              "output": 8
             }
           ]
         },
-        "fallbackOutput": 5
+        "fallbackOutput": 9
       },
       "id": "router-node",
       "name": "Router",
@@ -61,17 +94,17 @@
       "name": "Mock Dashboard",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 100]
+      "position": [1100, 0]
     },
     {
       "parameters": {
-        "jsCode": "return [{\n  json: [\n    {\n      id: \"inst-1\",\n      name: \"Universidad Nacional\",\n      status: \"active\",\n      credits: 500,\n      email: \"contacto@una.edu\",\n      joinedAt: \"2023-01-15\",\n      emissions: 150,\n      verifications: 45,\n      revocations: 2\n    },\n    {\n      id: \"inst-2\",\n      name: \"Instituto Tecnológico\",\n      status: \"active\",\n      credits: 50,\n      email: \"admin@tec.edu\",\n      joinedAt: \"2023-02-10\",\n      emissions: 30,\n      verifications: 10,\n      revocations: 0\n    }\n  ]\n}];"
+        "jsCode": "const method = $input.item.json.method || 'GET';\nconst body = $input.item.json.body || {};\n\nif (method === 'POST') {\n  // Create Institution\n  return [{\n    json: {\n      id: \"inst-\" + Math.floor(Math.random() * 1000),\n      name: body.name || \"Nueva Universidad\",\n      status: \"active\",\n      credits: 0,\n      joinedAt: new Date().toISOString(),\n      emissions: 0,\n      verifications: 0,\n      revocations: 0,\n      plan: body.plan || \"Startup\"\n    }\n  }];\n}\n\n// Default GET list\nreturn [{\n  json: [\n    {\n      id: \"inst-1\",\n      name: \"Universidad Nacional\",\n      status: \"active\",\n      credits: 500,\n      email: \"contacto@una.edu\",\n      joinedAt: \"2023-01-15\",\n      emissions: 150,\n      verifications: 45,\n      revocations: 2\n    },\n    {\n      id: \"inst-2\",\n      name: \"Instituto Tecnológico\",\n      status: \"active\",\n      credits: 50,\n      email: \"admin@tec.edu\",\n      joinedAt: \"2023-02-10\",\n      emissions: 30,\n      verifications: 10,\n      revocations: 0\n    }\n  ]\n}];"
       },
       "id": "mock-institutions",
       "name": "Mock Institutions",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 300]
+      "position": [1100, 200]
     },
     {
       "parameters": {
@@ -81,17 +114,17 @@
       "name": "Mock Wallet",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 500]
+      "position": [1100, 400]
     },
     {
       "parameters": {
-        "jsCode": "// Extract ID from route: /partner/institutions/inst-1/credentials\nconst route = $input.item.json.query.route;\nconst parts = route.split('/');\n// parts[0]='', [1]='partner', [2]='institutions', [3]='inst-1', [4]='credentials'\nconst instId = parts[3];\n\nconst allCreds = [\n  { id: \"c1\", institutionId: \"inst-1\", studentName: \"Juan Perez\", program: \"Ingeniería\", status: \"verified\", issuedAt: \"2023-01-01\" },\n  { id: \"c2\", institutionId: \"inst-1\", studentName: \"Maria Lopez\", program: \"Derecho\", status: \"verified\", issuedAt: \"2023-02-01\" },\n  { id: \"c3\", institutionId: \"inst-2\", studentName: \"Carlos Ruiz\", program: \"Medicina\", status: \"revoked\", issuedAt: \"2023-03-01\" }\n];\n\nreturn [{\n  json: allCreds.filter(c => c.institutionId === instId)\n}];"
+        "jsCode": "// Extract ID from route: /partner/institutions/inst-1/credentials\nconst route = $input.item.json.query.route || $input.item.json.body.route || \"\";\n\n// Handle Revocations List\nif (route.includes(\"/revocations\")) {\n  return [{\n    json: [\n      { id: \"rev-1\", credentialId: \"c3\", reason: \"Plagio\", revokedAt: \"2023-03-01\" }\n    ]\n  }];\n}\n\n// Handle Specific Credential List for Institution\nif (route.includes(\"/partner/institutions/\")) {\n  const parts = route.split('/');\n  // parts[0]='', [1]='partner', [2]='institutions', [3]='inst-1', [4]='credentials'\n  const instId = parts[3];\n\n  const allCreds = [\n    { id: \"c1\", institutionId: \"inst-1\", studentName: \"Juan Perez\", program: \"Ingeniería\", status: \"verified\", issuedAt: \"2023-01-01\" },\n    { id: \"c2\", institutionId: \"inst-1\", studentName: \"Maria Lopez\", program: \"Derecho\", status: \"verified\", issuedAt: \"2023-02-01\" },\n    { id: \"c3\", institutionId: \"inst-2\", studentName: \"Carlos Ruiz\", program: \"Medicina\", status: \"revoked\", issuedAt: \"2023-03-01\" }\n  ];\n\n  return [{\n    json: allCreds.filter(c => c.institutionId === instId)\n  }];\n}\n\n// Handle Verify Single\nif (route.includes(\"/verify/\")) {\n  return [{\n    json: {\n      valid: true,\n      credential: { id: \"c1\", student: \"Juan Perez\", issuer: \"Universidad Nacional\" }\n    }\n  }];\n}\n\n// Handle Revoke Action\nif (route.includes(\"/revoke\")) {\n  return [{\n    json: { success: true, message: \"Credential revoked\" }\n  }];\n}\n\nreturn [{ json: [] }];"
       },
       "id": "mock-credentials",
       "name": "Mock Credentials",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 700]
+      "position": [1100, 600]
     },
     {
       "parameters": {
@@ -101,7 +134,47 @@
       "name": "Mock Crypto",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 900]
+      "position": [1100, 800]
+    },
+    {
+      "parameters": {
+        "jsCode": "const route = $input.item.json.query.route || $input.item.json.body.route || \"\";\n\nif (route.includes(\"login\")) {\n  return [{\n    json: {\n      user: { id: 1, name: \"Admin\", email: \"admin@academic.chain\" },\n      token: \"mock-jwt-token-123\"\n    }\n  }];\n}\n\nreturn [{ json: { success: true } }];"
+      },
+      "id": "mock-auth",
+      "name": "Mock Auth",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 1000]
+    },
+    {
+      "parameters": {
+        "jsCode": "const route = $input.item.json.query.route || $input.item.json.body.route || \"\";\nconst method = $input.item.json.method || 'GET';\n\nif (method === 'DELETE') {\n  return [{ json: { success: true, message: \"Key revoked\" } }];\n}\n\nif (method === 'POST') {\n  return [{\n    json: {\n      apiKey: \"acp_\" + Math.random().toString(36).substring(2),\n      label: \"Nueva Key\",\n      createdAt: new Date().toISOString()\n    }\n  }];\n}\n\n// List\nreturn [{\n  json: [\n    { id: \"k1\", label: \"Key Principal\", prefix: \"acp_123\", createdAt: \"2023-01-01\" },\n    { id: \"k2\", label: \"Key Desarrollo\", prefix: \"acp_456\", createdAt: \"2023-05-01\" }\n  ]\n}];"
+      },
+      "id": "mock-keys",
+      "name": "Mock Keys",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 1200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const route = $input.item.json.query.route || $input.item.json.body.route || \"\";\n\n// Emissions List\nif (route.includes(\"/emissions\")) {\n  return [{\n    json: [\n      { id: \"e1\", type: \"Diploma\", student: \"Ana\", date: \"2023-09-01\" },\n      { id: \"e2\", type: \"Certificado\", student: \"Luis\", date: \"2023-09-05\" }\n    ]\n  }];\n}\n\n// Logs\nif (route.includes(\"/logs\")) {\n  return [{\n    json: [\n      { id: \"l1\", action: \"LOGIN\", user: \"admin\", ip: \"127.0.0.1\", time: \"Now\" },\n      { id: \"l2\", action: \"MINT\", user: \"system\", ip: \"127.0.0.1\", time: \"Yesterday\" }\n    ]\n  }];\n}\n\n// Verify (Token/Serial)\nif (route.includes(\"/verify\")) {\n  return [{ json: { valid: true, details: \"Verified Mock\" } }];\n}\n\n// Mint / Create Token\nreturn [{ json: { success: true, txId: \"0.0.mock.tx\" } }];"
+      },
+      "id": "mock-operations",
+      "name": "Mock Operations",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 1400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || {};\nconst amount = body.amount || 0;\nreturn [{ json: { success: true, credits: 1000 + amount } }];"
+      },
+      "id": "mock-credits",
+      "name": "Mock Credits",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 1600]
     },
     {
       "parameters": {
@@ -161,6 +234,34 @@
         [
           {
             "node": "Mock Crypto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mock Auth",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mock Keys",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mock Operations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mock Credits",
             "type": "main",
             "index": 0
           }

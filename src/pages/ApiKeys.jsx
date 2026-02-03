@@ -203,17 +203,32 @@ export default function ApiKeys() {
                 <form onSubmit={handleCreate} className="mt-4 space-y-4">
                   <div className="space-y-1">
                     <label className="text-xs text-slate-400">Institución</label>
-                    <select
-                      required
-                      value={draft.institutionId}
-                      onChange={(e) => setDraft({ ...draft, institutionId: e.target.value })}
-                      className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-200 outline-none focus:border-brand-500"
-                    >
-                      <option value="" disabled>Selecciona una institución</option>
-                      {institutions.map(inst => (
-                        <option key={inst.id} value={inst.id}>{inst.name}</option>
-                      ))}
-                    </select>
+                    {loading ? (
+                      <div className="animate-pulse h-10 w-full rounded-xl bg-slate-900 border border-slate-800" />
+                    ) : institutions.length > 0 ? (
+                      <select
+                        required
+                        value={draft.institutionId}
+                        onChange={(e) => setDraft({ ...draft, institutionId: e.target.value })}
+                        className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-200 outline-none focus:border-brand-500"
+                      >
+                        <option value="" disabled>Selecciona una institución</option>
+                        {institutions.map(inst => (
+                          <option key={inst.id} value={inst.id}>{inst.name}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 p-3 text-center">
+                        <p className="text-xs text-rose-300 mb-2">No se pudieron cargar las instituciones.</p>
+                        <button 
+                          type="button"
+                          onClick={() => window.location.reload()} 
+                          className="text-[10px] underline text-rose-400 hover:text-rose-200"
+                        >
+                          Recargar página
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs text-slate-400">Etiqueta</label>

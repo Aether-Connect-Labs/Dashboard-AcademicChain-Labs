@@ -95,18 +95,17 @@ export default function Institutions() {
   useEffect(() => {
     if (selectedInst?.id) {
         setLoadingCreds(true);
-        fetch(`${baseUrl}/partner/institutions/${selectedInst.id}/credentials`)
-           .then(res => res.json())
+        service.getInstitutionCredentials(selectedInst.id)
            .then(data => setInstCredentials(Array.isArray(data) ? data : []))
            .catch(err => {
-               console.error(err);
+               console.error("Failed to load credentials", err);
                setInstCredentials([]);
            })
            .finally(() => setLoadingCreds(false));
     } else {
         setInstCredentials([]);
     }
-  }, [selectedInst, baseUrl]);
+  }, [selectedInst, service]);
 
   async function handleUpdateCredits(id, amount) {
       if (!service.updateInstitutionCredits) return;

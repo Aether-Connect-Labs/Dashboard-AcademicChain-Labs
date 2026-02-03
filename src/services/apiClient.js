@@ -36,7 +36,18 @@ export function createApiClient({ baseUrl, apiKey }) {
   });
 
   instance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      // ADAPTADOR DE RESPUESTA N8N
+      // Si n8n devuelve la estructura interna [{ json: ... }], la desempaquetamos
+      if (Array.isArray(response.data) && response.data.length === 1 && response.data[0].json) {
+        // Caso 1: El contenido real está en .json
+        const content = response.data[0].json;
+        // Si el contenido es un array (ej. lista de instituciones), lo devolvemos
+        // Si es un objeto (ej. dashboard stats), lo devolvemos
+        response.data = content;
+      }
+      return response;
+    },
     (error) => {
       if (error.response) {
         const message =

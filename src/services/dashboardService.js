@@ -101,6 +101,16 @@ export function buildDashboardService({ baseUrl, apiKey }) {
       return data;
   }
 
+  async function getInstitutionCredentials(id) {
+    const { data } = await client.get(`/partner/institutions/${id}/credentials`);
+    return data;
+  }
+
+  async function getCryptoTransactions() {
+    const { data } = await client.get("/partner/crypto/transactions");
+    return data;
+  }
+
   return {
     getOverview,
     getInstitutions,
@@ -117,6 +127,8 @@ export function buildDashboardService({ baseUrl, apiKey }) {
     getRevocations,
     getLogs,
     updateInstitutionCredits,
+    getInstitutionCredentials,
+    getCryptoTransactions,
     login,
     logout
   };

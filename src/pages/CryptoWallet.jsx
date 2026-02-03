@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useApi } from "../state/ApiContext.jsx";
+import { buildDashboardService } from "../services/dashboardService.js";
 import { Coins, ArrowUpRight, ArrowDownLeft, RefreshCcw } from "lucide-react";
 
 export default function CryptoWallet() {
-  const { baseUrl } = useApi();
+  const { baseUrl, apiKey } = useApi();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const service = useMemo(
+    () => buildDashboardService({ baseUrl, apiKey }),
+    [baseUrl, apiKey]
+  );
+
   const fetchTransactions = () => {
     setLoading(true);
-    // Fetch from n8n or backend
-    fetch(`${baseUrl}/partner/crypto/transactions`)
-      .then(res => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
+    service.getCryptoTransactions()
       .then(data => {
         setTransactions(Array.isArray(data) ? data : []);
       })
@@ -27,7 +28,7 @@ export default function CryptoWallet() {
 
   useEffect(() => {
     fetchTransactions();
-  }, [baseUrl]);
+  }, [service]);
 
   return (
     <div className="space-y-6">
