@@ -515,6 +515,18 @@ app.get('/partner/institutions/:id/credentials', (req, res) => {
   res.json(creds);
 });
 
+// Wallet Mock Data
+app.get('/dashboard/wallet', (req, res) => {
+  res.json({
+    balance: 12500.45,
+    transactions: [
+      { id: "tx-102", type: "debit", amount: 50, date: "2023-10-25T14:30:00Z", label: "Recarga Gas", txId: "0.0.34567@169824" },
+      { id: "tx-101", type: "credit", amount: 5000, date: "2023-10-24T09:15:00Z", label: "Fondeo Inicial", txId: "0.0.12345@169820" },
+      { id: "tx-100", type: "debit", amount: 2.5, date: "2023-10-23T11:20:00Z", label: "Fee Emisión", txId: "0.0.34567@169810" },
+    ]
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Dashboard Backend corriendo en http://localhost:${PORT}`);
   console.log(`   - Institutions: ${db.institutions.length}`);

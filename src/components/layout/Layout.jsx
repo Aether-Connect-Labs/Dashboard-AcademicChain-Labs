@@ -1,11 +1,12 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { BarChart3, KeyRound, School, ActivitySquare, ShieldCheck, FileText, PieChart } from "lucide-react";
+import { BarChart3, KeyRound, School, ActivitySquare, ShieldCheck, FileText, PieChart, Wallet } from "lucide-react";
 import { useApi } from "../../state/ApiContext.jsx";
 import ToastHost from "../feedback/ToastHost.jsx";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/metricas", label: "Métricas", icon: PieChart },
+  { to: "/billetera", label: "Billetera Crypto", icon: Wallet },
   { to: "/instituciones", label: "Instituciones", icon: School },
   { to: "/api-keys", label: "Gestión API Keys", icon: KeyRound },
   { to: "/logs", label: "Logs de Auditoría", icon: FileText },

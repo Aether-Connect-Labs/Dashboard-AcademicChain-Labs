@@ -8,6 +8,7 @@ import Emissions from "./pages/Emissions.jsx";
 import Verification from "./pages/Verification.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
 import Metrics from "./pages/Metrics.jsx";
+import Wallet from "./pages/Wallet.jsx";
 import Layout from "./components/layout/Layout.jsx";
 
 function PrivateRoute({ children }) {
@@ -44,6 +45,7 @@ export default function App() {
       >
         <Route index element={<DashboardHome />} />
         <Route path="metricas" element={<Metrics />} />
+        <Route path="billetera" element={<Wallet />} />
         <Route path="instituciones" element={<Institutions />} />
         <Route path="api-keys" element={<ApiKeys />} />
         <Route path="logs" element={<AuditLogs />} />
