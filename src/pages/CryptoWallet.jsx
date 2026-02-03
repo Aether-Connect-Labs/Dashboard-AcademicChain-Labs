@@ -6,6 +6,7 @@ import { Coins, ArrowUpRight, ArrowDownLeft, RefreshCcw } from "lucide-react";
 export default function CryptoWallet() {
   const { baseUrl, apiKey } = useApi();
   const [transactions, setTransactions] = useState([]);
+  const [credits, setCredits] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const service = useMemo(
@@ -17,7 +18,13 @@ export default function CryptoWallet() {
     setLoading(true);
     service.getCryptoTransactions()
       .then(data => {
-        setTransactions(Array.isArray(data) ? data : []);
+        // Handle both n8n object format { credits: X, transactions: [...] } and legacy array format
+        if (data && !Array.isArray(data) && data.transactions) {
+          setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+          if (data.credits !== undefined) setCredits(data.credits);
+        } else {
+          setTransactions(Array.isArray(data) ? data : []);
+        }
       })
       .catch(err => {
         console.error("Failed to fetch crypto transactions:", err);
@@ -56,7 +63,7 @@ export default function CryptoWallet() {
                 <span className="text-xs font-medium uppercase tracking-wider">Total Ingresos</span>
             </div>
             <div className="text-2xl font-bold text-emerald-400">
-                +150.00 <span className="text-sm text-slate-500">TOKENS</span>
+                {credits.toFixed(2)} <span className="text-sm text-slate-500">CREDITS</span>
             </div>
         </div>
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4">

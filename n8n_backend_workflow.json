@@ -128,7 +128,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return [{\n  json: [\n    {\n      id: \"ctx-1\",\n      description: \"Pago Mensualidad\",\n      type: \"deposit\",\n      amount: 100,\n      transactionId: \"0.0.99999\",\n      timestamp: new Date().toISOString()\n    },\n    {\n      id: \"ctx-2\",\n      description: \"Compra Token\",\n      type: \"withdrawal\",\n      amount: 50,\n      transactionId: \"0.0.88888\",\n      timestamp: new Date(Date.now() - 86400000).toISOString()\n    }\n  ]\n}];"
+        "jsCode": "return [{\n  json: {\n    credits: 1500,\n    transactions: [\n      {\n        id: \"ctx-1\",\n        description: \"Pago Mensualidad\",\n        type: \"deposit\",\n        amount: 100,\n        transactionId: \"0.0.99999\",\n        timestamp: new Date().toISOString()\n      },\n      {\n        id: \"ctx-2\",\n        description: \"Compra Token\",\n        type: \"withdrawal\",\n        amount: 50,\n        transactionId: \"0.0.88888\",\n        timestamp: new Date(Date.now() - 86400000).toISOString()\n      }\n    ]\n  }\n}];"
       },
       "id": "mock-crypto",
       "name": "Mock Crypto",
@@ -158,7 +158,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const route = $input.item.json.query.route || $input.item.json.body.route || \"\";\n\n// Emissions List\nif (route.includes(\"/emissions\")) {\n  return [{\n    json: [\n      { id: \"e1\", type: \"Diploma\", student: \"Ana\", date: \"2023-09-01\" },\n      { id: \"e2\", type: \"Certificado\", student: \"Luis\", date: \"2023-09-05\" }\n    ]\n  }];\n}\n\n// Logs\nif (route.includes(\"/logs\")) {\n  return [{\n    json: [\n      { id: \"l1\", action: \"LOGIN\", user: \"admin\", ip: \"127.0.0.1\", time: \"Now\" },\n      { id: \"l2\", action: \"MINT\", user: \"system\", ip: \"127.0.0.1\", time: \"Yesterday\" }\n    ]\n  }];\n}\n\n// Verify (Token/Serial)\nif (route.includes(\"/verify\")) {\n  return [{ json: { valid: true, details: \"Verified Mock\" } }];\n}\n\n// Mint / Create Token\nreturn [{ json: { success: true, txId: \"0.0.mock.tx\" } }];"
+        "jsCode": "const route = $input.item.json.query.route || $input.item.json.body.route || \"\";\n\n// Emissions List\nif (route.includes(\"/emissions\")) {\n  return [{\n    json: [\n      { id: \"e1\", type: \"Diploma\", student: \"Ana\", date: \"2023-09-01\" },\n      { id: \"e2\", type: \"Certificado\", student: \"Luis\", date: \"2023-09-05\" }\n    ]\n  }];\n}\n\n// Logs\nif (route.includes(\"/logs\")) {\n  return [{\n    json: [\n      { id: \"l1\", action: \"LOGIN\", user: \"admin\", ip: \"127.0.0.1\", time: \"Now\" },\n      { id: \"l2\", action: \"MINT\", user: \"system\", ip: \"127.0.0.1\", time: \"Yesterday\" }\n    ]\n  }];\n}\n\n// Verify (Token/Serial)\nif (route.includes(\"/verify\")) {\n  return [{ json: { valid: true, details: \"Verified Mock\" } }];\n}\n\n// Mint / Create Token\nreturn [{ json: { success: true, txId: \"0.0.mock.tx\", credits: 99 } }];"
       },
       "id": "mock-operations",
       "name": "Mock Operations",
