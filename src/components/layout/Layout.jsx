@@ -7,6 +7,7 @@ const navItems = [
   { to: "/", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/metricas", label: "Métricas", icon: PieChart },
   { to: "/billetera", label: "Billetera Crypto", icon: Wallet },
+  { to: "/cripto", label: "Registro Cripto", icon: Coins },
   { to: "/instituciones", label: "Instituciones", icon: School },
   { to: "/api-keys", label: "Gestión API Keys", icon: KeyRound },
   { to: "/logs", label: "Logs de Auditoría", icon: FileText },

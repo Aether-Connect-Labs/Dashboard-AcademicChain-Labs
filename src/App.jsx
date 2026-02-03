@@ -47,6 +47,7 @@ export default function App() {
         <Route index element={<DashboardHome />} />
         <Route path="metricas" element={<Metrics />} />
         <Route path="billetera" element={<Wallet />} />
+        <Route path="cripto" element={<CryptoWallet />} />
         <Route path="instituciones" element={<Institutions />} />
         <Route path="api-keys" element={<ApiKeys />} />
         <Route path="logs" element={<AuditLogs />} />
