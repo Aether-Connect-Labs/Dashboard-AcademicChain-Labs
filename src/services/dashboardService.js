@@ -1,6 +1,7 @@
 import { createApiClient } from "./apiClient.js";
 
 export function buildDashboardService({ baseUrl, apiKey }) {
+  // Service initialized
   const client = createApiClient({ baseUrl, apiKey });
 
   async function login(password) {

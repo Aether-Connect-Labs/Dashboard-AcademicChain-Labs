@@ -147,9 +147,9 @@ export default function Institutions() {
   async function handleCreateInstitution(e) {
     e.preventDefault();
     try {
-      if (!service.createInstitution) {
-        throw new Error("Servicio no disponible");
-      }
+      // if (!service.createInstitution) {
+      //   throw new Error("Servicio no disponible");
+      // }
       
       const newInst = await service.createInstitution({
         name: instDraft.name,
